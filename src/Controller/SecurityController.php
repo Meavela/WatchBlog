@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\LoginType;
 use App\Form\RegistrationType;
-use App\Form\VideoType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class SecurityController extends AbstractController
 {
@@ -20,6 +22,21 @@ class SecurityController extends AbstractController
     public function admin()
     {
         return new Response('<html><body>Admin page!</body></html>');
+    }
+    /**
+     * @Route("/login", name="app_login", methods={"GET", "POST"})
+     */
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error
+        ]);
     }
 
     /**
@@ -56,7 +73,7 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirect('/login');
+            return $this->redirect('login');
         }
 
         return $this->render('security/register.html.twig', [

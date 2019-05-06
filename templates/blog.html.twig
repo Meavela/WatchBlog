@@ -14,10 +14,10 @@
                 <ul class="navbar-nav ml-auto">
                     {% if userConnected == null %}
                         <li class="nav-item">
-                            <a class="nav-link" href="../../register">Sign Up</a>
+                            <a class="nav-link" href="{{ path('register') }}">Sign Up</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../../login">Log In</a>
+                            <a class="nav-link" href="{{ path('app_login') }}">Log In</a>
                         </li>
                     {% endif %}
                     {% if userConnected != null %}

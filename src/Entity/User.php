@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User extends BaseUser
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -185,6 +186,35 @@ class User extends BaseUser
         if ($this->videos->contains($video)) {
             $this->videos->removeElement($video);
             $video->removeUsersAddedNotation($this);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAdmin($boolean)
+    {
+        if (true === $boolean) {
+            $this->addRole(static::ROLE_ADMIN);
+        } else {
+            $this->removeRole(static::ROLE_ADMIN);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUser($boolean)
+    {
+        if (true === $boolean) {
+            $this->addRole(static::ROLE_DEFAULT);
+        } else {
+            $this->removeRole(static::ROLE_DEFAULT);
         }
 
         return $this;

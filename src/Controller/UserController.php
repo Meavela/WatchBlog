@@ -21,8 +21,20 @@ class UserController extends AbstractController
     public function profile(Security $security)
     {
         $userConnected = $security->getUser();
+        $hasRoleAdmin = false;
+        $hasRoleSuperAdmin = false;
+        foreach ($userConnected->getRoles() as $role){
+            if ($role == "ROLE_ADMIN"){
+                $hasRoleAdmin = true;
+            }
+            if ($role == "ROLE_SUPER_ADMIN"){
+                $hasRoleSuperAdmin = true;
+            }
+        }
         return $this->render('user/profile.html.twig', [
             'userConnected' => $userConnected,
+            'hasRoleAdmin' => $hasRoleAdmin,
+            'hasRoleSuperAdmin' => $hasRoleSuperAdmin,
         ]);
     }
 
