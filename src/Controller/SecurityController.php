@@ -9,11 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-
     /**
      * @Route("/admin")
      */
@@ -21,26 +19,7 @@ class SecurityController extends AbstractController
     {
         return new Response('<html><body>Admin page!</body></html>');
     }
-    /**
-     * @Route("/login", name="app_login", methods={"GET", "POST"})
-     */
-    public function login(AuthenticationUtils $authenticationUtils, Security $security): Response
-    {
-        $userConnected = $security->getUser();
 
-        if ($userConnected == null){
-            // get the login error if there is one
-            $error = $authenticationUtils->getLastAuthenticationError();
-            // last username entered by the user
-            $lastUsername = $authenticationUtils->getLastUsername();
-
-            return $this->render('security/login.html.twig', [
-                'last_username' => $lastUsername,
-                'error' => $error
-            ]);
-        }
-        return $this->redirectToRoute('watchblog');
-    }
 
     /**
      * @Route("/register", name="register", methods={"GET", "POST"})
@@ -86,4 +65,5 @@ class SecurityController extends AbstractController
         }
         return $this->redirectToRoute('watchblog');
 
-    }}
+    }
+}
