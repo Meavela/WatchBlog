@@ -30,12 +30,16 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/video/new/, role: IS_AUTHENTICATED_FULLY }
-        - { path: ^/profile/you/, role: IS_AUTHENTICATED_FULLY }
-        - { path: ^/profile/0/, role: ROLE_NO_ACCESS }
-        - { path: /notation$, role: IS_AUTHENTICATED_FULLY }
-        - { path: /edit$, role: IS_AUTHENTICATED_FULLY }
-        - { path: /toAdmin$, role: ROLE_SUPER_ADMIN }
-        - { path: /toUser$, role: ROLE_SUPER_ADMIN }
+        # Anonymize Access
+        - { path: /login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        # Connect Access
+        - { path: /video/new, role: IS_AUTHENTICATED_FULLY }
+        - { path: /profile/you, role: IS_AUTHENTICATED_FULLY }
+        - { path: /notation, role: IS_AUTHENTICATED_FULLY }
+        - { path: /edit, role: IS_AUTHENTICATED_FULLY }
+        # SuperAdmin Access
+        - { path: /toAdmin, role: ROLE_SUPER_ADMIN }
+        - { path: /toUser, role: ROLE_SUPER_ADMIN }
+        # No Access
+        - { path: /profile/0/, role: ROLE_NO_ACCESS }
