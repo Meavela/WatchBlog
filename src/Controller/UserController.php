@@ -91,13 +91,14 @@ class UserController extends AbstractController
                 $hasRoleSuperAdmin = true;
             }
         }
-
         return $this->render('user/user.html.twig', [
             'userConnected' => $userConnected,
             'user' => $user,
             'hasRoleAdmin' => $hasRoleAdmin,
             'hasRoleSuperAdmin' => $hasRoleSuperAdmin,
         ]);
+
+
     }
     /**
      * @Route("/profile/{id}/toAdmin", name="user_toAdmin", methods={"GET","POST"})
@@ -127,6 +128,7 @@ class UserController extends AbstractController
 
             return $this->render('user/user.html.twig', [
                 'userConnected' => $userConnected,
+                'hasRoleAdmin' => true,
                 'user' => $user,
                 'hasRoleSuperAdmin' => true,
             ]);
@@ -134,6 +136,7 @@ class UserController extends AbstractController
         }else{
             return $this->render('user/user.html.twig', [
                 'userConnected' => $userConnected,
+                'hasRoleAdmin' => false,
                 'user' => $user,
                 'hasRoleSuperAdmin' => false,
             ]);

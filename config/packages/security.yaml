@@ -34,6 +34,7 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/video/new/, role: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/you/, role: IS_AUTHENTICATED_FULLY }
+        - { path: ^/profile/0/, role: ROLE_NO_ACCESS }
         - { path: /notation$, role: IS_AUTHENTICATED_FULLY }
         - { path: /edit$, role: IS_AUTHENTICATED_FULLY }
         - { path: /toAdmin$, role: ROLE_SUPER_ADMIN }
