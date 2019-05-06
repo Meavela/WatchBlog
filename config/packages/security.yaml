@@ -33,7 +33,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, role: ROLE_ADMIN }
@@ -41,5 +41,5 @@ security:
         - { path: ^/profile/you/, role: IS_AUTHENTICATED_FULLY }
         - { path: /notation$, role: IS_AUTHENTICATED_FULLY }
         - { path: /edit$, role: IS_AUTHENTICATED_FULLY }
-        - { path: /toAdmin$, role: ROLE_ADMIN }
-        - { path: /toUser$, role: ROLE_ADMIN }
+        - { path: /toAdmin$, role: ROLE_SUPER_ADMIN }
+        - { path: /toUser$, role: ROLE_SUPER_ADMIN }

@@ -3,19 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\LoginType;
 use App\Form\RegistrationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class SecurityController extends AbstractController
 {
-    const ROLE_DEFAULT = 'ROLE_USER';
+
     /**
      * @Route("/admin")
      */
@@ -26,58 +24,66 @@ class SecurityController extends AbstractController
     /**
      * @Route("/login", name="app_login", methods={"GET", "POST"})
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, Security $security): Response
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+        $userConnected = $security->getUser();
 
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error
-        ]);
+        if ($userConnected == null){
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
+            // last username entered by the user
+            $lastUsername = $authenticationUtils->getLastUsername();
+
+            return $this->render('security/login.html.twig', [
+                'last_username' => $lastUsername,
+                'error' => $error
+            ]);
+        }
+        return $this->redirectToRoute('watchblog');
     }
 
     /**
      * @Route("/register", name="register", methods={"GET", "POST"})
      */
-    public function register(Request $request)
+    public function register(Request $request, Security $security)
     {
-        $user = new User();
+        $userConnected = $security->getUser();
 
-        $form = $this->createForm(RegistrationType::class, $user);
-        $form->handleRequest($request);
+        if ($userConnected == null){
+            $user = new User();
+
+            $form = $this->createForm(RegistrationType::class, $user);
+            $form->handleRequest($request);
 
 
-        $user->setUser(true);
+            $user->setUser(true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $file stores the uploaded Image file
-            // /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-            $file = $user->getImageFile();
+            if ($form->isSubmitted() && $form->isValid()) {
 
-            $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                $file = $user->getImageFile();
 
-            // moves the file to the directory where image are stored
-            $file->move(
-                $this->getParameter('kernel.project_dir') . '/public/blog/uploads/users',
-                $fileName
-            );
+                $fileName = md5(uniqid()) . '.' . $file->guessExtension();
 
-            // updates the 'image' property to store the filename
-            $user->setImage($fileName);
-            $user->setEnabled(true);
+                $file->move(
+                    $this->getParameter('kernel.project_dir') . '/public/blog/uploads/users',
+                    $fileName
+                );
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $user->setImage($fileName);
+                $user->setEnabled(true);
 
-            return $this->redirect('login');
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                return $this->redirect('login');
+            }
+
+            return $this->render('security/register.html.twig', [
+                'user' => $user,
+                'form' => $form->createView(),
+            ]);
         }
+        return $this->redirectToRoute('watchblog');
 
-        return $this->render('security/register.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
     }}

@@ -64,7 +64,7 @@
                                 <h6 style="color: red"><i>-- ADMIN --</i></h6>
                             {% endif %}
                             {% for role in userConnected.roles %}
-                                {% if role == "ROLE_ADMIN" %}
+                                {% if role == "ROLE_SUPER_ADMIN" %}
                                     {% if hasRoleSuperAdmin == false %}
                                         {{ include('user/_adminToUser_form.html.twig') }}
                                     {% endif %}
@@ -72,7 +72,7 @@
                             {% endfor %}
                         {% else %}
                             {% for role in userConnected.roles %}
-                                {% if role == "ROLE_ADMIN" %}
+                                {% if role == "ROLE_SUPER_ADMIN" %}
                                     {{ include('user/_userToAdmin_form.html.twig') }}
                                 {% endif %}
                             {% endfor %}

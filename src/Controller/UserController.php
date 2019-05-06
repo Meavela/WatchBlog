@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ProfileEditType;
-use App\Form\RegistrationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,7 +107,7 @@ class UserController extends AbstractController
         $userConnected = $security->getUser();
         $users = $this->getDoctrine()->getRepository(User::class)->findAll();
         $currentUser = new User();
-        $isAdmin = false;
+        $isSuperAdmin = false;
         foreach ($users as $User)
         {
             if ($User == $userConnected){
@@ -117,26 +116,26 @@ class UserController extends AbstractController
         }
         foreach ($currentUser->getRoles() as $role)
         {
-            if ($role == "ROLE_ADMIN"){
-                $isAdmin = true;
+            if ($role == "ROLE_SUPER_ADMIN"){
+                $isSuperAdmin = true;
             }
         }
 
-        if ($isAdmin){
+        if ($isSuperAdmin){
             $user->setAdmin(true);
             $this->getDoctrine()->getManager()->flush();
 
             return $this->render('user/user.html.twig', [
                 'userConnected' => $userConnected,
                 'user' => $user,
-                'hasRoleAdmin' => true,
+                'hasRoleSuperAdmin' => true,
             ]);
 
         }else{
             return $this->render('user/user.html.twig', [
                 'userConnected' => $userConnected,
                 'user' => $user,
-                'hasRoleAdmin' => false,
+                'hasRoleSuperAdmin' => false,
             ]);
         }
 
@@ -150,8 +149,8 @@ class UserController extends AbstractController
         $userConnected = $security->getUser();
         $users = $this->getDoctrine()->getRepository(User::class)->findAll();
         $currentUser = new User();
-        $isAdmin = false;
-        $isSuperAdmin = false;
+        $currentUserIsSuperAdmin = false;
+        $userIsSuperAdmin = false;
         foreach ($users as $User)
         {
             if ($User == $userConnected){
@@ -160,18 +159,18 @@ class UserController extends AbstractController
         }
         foreach ($currentUser->getRoles() as $role)
         {
-            if ($role == "ROLE_ADMIN"){
-                $isAdmin = true;
+            if ($role == "ROLE_SUPER_ADMIN"){
+                $currentUserIsSuperAdmin = true;
             }
         }
 
         foreach ($user->getRoles() as $role){
             if ($role == "ROLE_SUPER_ADMIN"){
-                $isSuperAdmin = true;
+                $userIsSuperAdmin = true;
             }
         }
 
-        if ($isAdmin && !$isSuperAdmin){
+        if ($currentUserIsSuperAdmin && !$userIsSuperAdmin){
             $user->setAdmin(false);
             $this->getDoctrine()->getManager()->flush();
 
@@ -179,14 +178,14 @@ class UserController extends AbstractController
                 'userConnected' => $userConnected,
                 'user' => $user,
                 'hasRoleAdmin' => false,
-                'hasRoleSuperAdmin' => $isSuperAdmin,
+                'hasRoleSuperAdmin' => $userIsSuperAdmin,
             ]);
         }else{
             return $this->render('user/user.html.twig', [
                 'userConnected' => $userConnected,
                 'user' => $user,
                 'hasRoleAdmin' => true,
-                'hasRoleSuperAdmin' => $isSuperAdmin,
+                'hasRoleSuperAdmin' => $userIsSuperAdmin,
             ]);
         }
 
