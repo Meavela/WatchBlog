@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('watchblog') }}">WatchBlog</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    {% if userConnected == null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../register">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../login">Log In</a>
+                        </li>
+                    {% endif %}
+                    {% if userConnected != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('profile') }}">{{ userConnected.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../logout">Log Out</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="masthead text-center text-white">
+        <div class="masthead-content">
+            <div class="container">
+                <h1 class="masthead-heading mb-0">Edit profile</h1>
+                <br>
+                <a href="{{ path('watchblog') }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-arrow-left fa-xs"></i> Return to Home</h3></a>
+                <a href="{{ path('profile') }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-arrow-left fa-xs"></i> Return to Profile</h3></a>
+            </div>
+        </div>
+    </header>
+
+    <br>
+    <section style="text-align: center;">
+        {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+
+
+    </section>
+    <br>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-black">
+        <div class="container">
+            <p class="m-0 text-center text-white small">Copyright &copy;LouBEGE 2019</p>
+        </div>
+        <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ asset('blog/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('blog/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+{% endblock %}

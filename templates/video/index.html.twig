@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Video index{% endblock %}
+
+{% block body %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('watchblog') }}">WatchBlog</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    {% if userConnected == null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../register">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../login">Log In</a>
+                        </li>
+                    {% endif %}
+                    {% if userConnected != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('profile') }}">{{ userConnected.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../logout">Log Out</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="masthead text-center text-white">
+        <div class="masthead-content">
+            <div class="container">
+                <h1 class="masthead-heading mb-0">List of videos</h1>
+                <br>
+                <a href="{{ path('watchblog') }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-arrow-left fa-xs"></i> Return to Home</h3></a>
+                <a href="{{ path('video_new') }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-plus-circle fa-xs"></i> Create new video</h3></a>
+            </div>
+        </div>
+    </header>
+
+    <br>
+    <section style="text-align: center;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for video in videos %}
+                <tr>
+                    <td>{{ video.id }}</td>
+                    <td>{{ video.name }}</td>
+                    <td>
+                        <a href="{{ path('video_show', {'id': video.id}) }}">show</a>
+                        {% if userConnected != null %}
+                            {% if video.AddedBy.id == userConnected.id %}
+                                <a href="{{ path('video_edit', {'id': video.id}) }}">edit</a>
+                            {% else %}
+                                {% for role in userConnected.roles %}
+                                    {% if role == "ROLE_ADMIN" %}
+                                        <a href="{{ path('video_edit', {'id': video.id}) }}">edit</a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <br>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-black">
+        <div class="container">
+            <p class="m-0 text-center text-white small">Copyright &copy;LouBEGE 2019</p>
+        </div>
+        <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ asset('blog/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('blog/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    {% endblock %}

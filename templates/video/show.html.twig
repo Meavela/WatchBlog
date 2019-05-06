@@ -1,0 +1,195 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ video.name }}{% endblock %}
+
+{% block body %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('watchblog') }}">WatchBlog</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    {% if userConnected == null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../register">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../login">Log In</a>
+                        </li>
+                    {% endif %}
+                    {% if userConnected != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('profile') }}">{{ userConnected.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../logout">Log Out</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="masthead text-center text-white">
+        <div class="masthead-content">
+            <div class="container">
+                <h1 class="masthead-heading mb-0">{{ video.name }}</h1>
+                <br>
+                <a href="{{ path('video_list') }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-arrow-left fa-xs"></i> Return to List</h3></a>
+                {% if hasVote == false %}
+                    <a href="{{ path('video_notation', {'id': video.id}) }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-check"></i> Add Vote !</h3></a>
+                {% endif %}
+
+                {% if userConnected != null %}
+                    {% if video.AddedBy.id == userConnected.id %}
+                        <a href="{{ path('video_edit', {'id': video.id}) }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-edit fa-xs"></i> Edit video</h3></a>
+                    {% else %}
+                        {% for role in userConnected.roles %}
+                            {% if role == "ROLE_ADMIN" %}
+                                <a href="{{ path('video_edit', {'id': video.id}) }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-edit fa-xs"></i> Edit video</h3></a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    <br>
+    <section style="text-align: center;">
+        <img class="img-fluid rounded-circle" style="width: 500px" src="{{ asset('blog/uploads/videos/' ~ video.image) }}"/>
+        <br>
+        <br>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Added by</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Tags</th>
+                    <th>Notation</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th>{{ video.id }}</th>
+                {% if video.AddedBy.id != userConnected.id %}
+                    <td><a href="{{ path('user', {'id': video.AddedBy.id}) }}">{{ video.AddedBy }}</a></td>
+                {% else %}
+                    <td><a href="{{ path('profile') }}">{{ video.AddedBy }}</a></td>
+                {% endif %}
+                <td>{{ video.name }}</td>
+                <td>
+                {% for type in types %}
+                    {% if type == video.type %}
+                        {{ type.name }}
+                    {% endif %}
+                {% endfor %}
+                </td>
+                <td>
+                {% for tag in tags %}
+                    {% for videoTag in tag.videos %}
+                        {% if videoTag == video %}
+                            -{{ tag.name }} <br>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                </td>
+                <td>
+                    {% if video.notation != 0 %}
+                        {% for i in 1..video.notation %}
+                            <i class="fas fa-star"></i>
+                        {% endfor %}
+                    {% endif %}
+                    <br>
+                    {% if video.notation != 10 %}
+                        {% for i in 1..(10-video.notation) %}
+                            <i class="far fa-star"></i>
+                        {% endfor %}
+                    {% endif %}
+                </td>
+                <td>{{ video.description }}</td>
+            </tr>
+            </tbody>
+        </table>
+        {% if userConnected != null %}
+            {% if video.AddedBy.id == userConnected.id %}
+                <hr>
+                {{ include('video/_delete_form.html.twig') }}
+                <hr>
+            {% else %}
+                {% for role in userConnected.roles %}
+                    {% if role == "ROLE_ADMIN" %}
+                        <hr>
+                        {{ include('video/_delete_form.html.twig') }}
+                        <hr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
+        <h1>Comments</h1>
+        <table class="table">
+            <tbody>
+            {% for comment in comments %}
+                {% if comment.createdFor.id == video.id %}
+                    {% for user in users %}
+                        {% if comment.createdBy.id == user.id %}
+                            <tr>
+                                <th>
+                                    {% if user.id != 0 %}
+                                        <a href="{{ path('user', {'id': user.id}) }}">{{ user.username }}</a>
+                                    {% else %}
+                                        {{ user.username }}
+                                    {% endif %}
+                                    {% for role in comment.createdBy.roles %}
+                                        {% if role == "ROLE_ADMIN" %}
+                                            <br>
+                                            <i style="font-size: small; color: red">-- ADMIN --</i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <br>
+                                    ({{comment.createdAt ? comment.createdAt|date('H:i:s, Y-m-d') : ''}})
+
+                                </th>
+
+                                <td>{{ comment.opinion }}</td>
+                                {% if userConnected != null %}
+                                    {% if comment.createdBy.id == userConnected.id %}
+                                        <td>{{ include('comment/_delete_form.html.twig') }}</td>
+                                    {% else %}
+                                        {% for role in userConnected.roles %}
+                                            {% if role == "ROLE_ADMIN" %}
+                                                <td>{{ include('comment/_delete_form.html.twig') }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('comment_new', {id: video.id}) }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-plus-circle fa-xs"></i> Add Comment</h3></a>
+    </section>
+    <br>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-black">
+        <div class="container">
+            <p class="m-0 text-center text-white small">Copyright &copy;LouBEGE 2019</p>
+        </div>
+        <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ asset('blog/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('blog/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+{% endblock %}

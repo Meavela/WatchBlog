@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}WatchBlog - Profile{% endblock %}
+{% block body %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('watchblog') }}">WatchBlog</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    {% if userConnected == null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../register">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../login">Log In</a>
+                        </li>
+                    {% endif %}
+                    {% if userConnected != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('profile') }}">{{ userConnected.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../logout">Log Out</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="masthead text-center text-white">
+        <div class="masthead-content">
+            <div class="container">
+                <h1 class="masthead-heading mb-0">User profile !</h1>
+                <br>
+                <a href="{{ path('watchblog') }}"><h3 class="masthead-subheading mb-0"><i class="fas fa-arrow-left fa-xs"></i> Return to Home</h3></a>
+
+            </div>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="p-5">
+                        <div class="ImageOnHover">
+                            <img class="img-fluid rounded-circle image" src="{{ asset('blog/uploads/users/' ~ user.image) }}" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <div class="p-5">
+                        <h2 class="display-4">{{ user.username }}</h2>
+                        {% if hasRoleAdmin == true %}
+                            {% if hasRoleSuperAdmin == true %}
+                                <h6 style="color: red"><i>-- SUPER ADMIN --</i></h6>
+                            {% elseif hasRoleAdmin == true %}
+                                <h6 style="color: red"><i>-- ADMIN --</i></h6>
+                            {% endif %}
+                            {% for role in userConnected.roles %}
+                                {% if role == "ROLE_ADMIN" %}
+                                    {% if hasRoleSuperAdmin == false %}
+                                        {{ include('user/_adminToUser_form.html.twig') }}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for role in userConnected.roles %}
+                                {% if role == "ROLE_ADMIN" %}
+                                    {{ include('user/_userToAdmin_form.html.twig') }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <p><b>{{ user.email }}</b></p>
+                        <p>{{ user.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-black">
+        <div class="container">
+            <p class="m-0 text-center text-white small">Copyright &copy;LouBEGE 2019</p>
+        </div>
+        <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ asset('blog/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('blog/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+{% endblock %}
