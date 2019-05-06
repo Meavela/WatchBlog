@@ -16,9 +16,6 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-#            guard:
-#                authenticators:
-#                    - App\Security\LoginFormAuthenticator
             pattern: ^/
             form_login:
                 default_target_path: /watchblog/
@@ -35,8 +32,6 @@ security:
     access_control:
         - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin, role: ROLE_ADMIN }
         - { path: ^/video/new/, role: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile/you/, role: IS_AUTHENTICATED_FULLY }
         - { path: /notation$, role: IS_AUTHENTICATED_FULLY }

@@ -13,15 +13,6 @@ use Symfony\Component\Security\Core\Security;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/admin")
-     */
-    public function admin()
-    {
-        return new Response('<html><body>Admin page!</body></html>');
-    }
-
-
-    /**
      * @Route("/register", name="register", methods={"GET", "POST"})
      */
     public function register(Request $request, Security $security)
