@@ -18,7 +18,7 @@
                             <a class="nav-link" href="{{ path('register') }}">Sign Up</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_login') }}">Log In</a>
+                            <a class="nav-link" href="../../login">Log In</a>
                         </li>
                     {% endif %}
                     {% if userConnected != null %}
@@ -143,7 +143,11 @@
                             <tr>
                                 <th>
                                     {% if user.id != 0 %}
-                                        <a href="{{ path('user', {'id': user.id}) }}">{{ user.username }}</a>
+                                        {% if user.id != userConnected.id %}
+                                            <a href="{{ path('user', {'id': user.id}) }}">{{ user.username }}</a>
+                                        {% else %}
+                                            <a href="{{ path('profile') }}">{{ user.username }}</a>
+                                        {% endif %}
                                     {% else %}
                                         {{ user.username }}
                                     {% endif %}
